@@ -1,0 +1,29 @@
+<script>
+	let { data, lifeExpectancy } = $props();
+
+	const yearsArr = [...Array(lifeExpectancy).keys()];
+	const weeksArr = [...Array(52).keys()];
+
+	const weekNum = lifeExpectancy * 52 - parseInt(data['weeks']);
+	const finalWeek = lifeExpectancy * 52;
+	console.log(yearsArr);
+</script>
+
+<section id="calendar">
+	<p>
+		<i>Each of square of dots represents 52 weeks / 1 year of your life.</i>
+	</p>
+	<div class="dozen-grid">
+		{#each yearsArr as year, yearIndex}
+			<div class="year-grid">
+				{#each weeksArr.map((val, valIndex) => {
+					const currWeek = yearIndex * 52 + valIndex;
+					const dotStyle = currWeek == finalWeek - 1 ? ' death' : currWeek < weekNum ? ' solid' : currWeek == weekNum ? ' pulse' : ' ';
+					return { week: val, currWeek, dotStyle };
+				}) as week, weekIndex}
+                <div class="dot {week.dotStyle}"></div>
+                {/each}
+			</div>
+		{/each}
+	</div>
+</section>
