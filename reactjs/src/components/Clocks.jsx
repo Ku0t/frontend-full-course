@@ -22,7 +22,7 @@ function Clock(props) {
 export default function Clocks(props) {
 	const { data } = props;
 	const snapshot = getTimePercentage();
-    console.log(snapshot)
+	// console.log(snapshot)
 	return (
 		<section id='clocks'>
 			<p>
