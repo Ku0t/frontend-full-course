@@ -3,7 +3,7 @@
 
 	let { data } = $props();
 	let snapshot = getTimePercentage();
-	console.log(data, snapshot);
+
 </script>
 
 <section id="clocks">

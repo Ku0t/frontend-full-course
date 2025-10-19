@@ -1,12 +1,12 @@
 <script>
 	let { data, lifeExpectancy } = $props();
 
-	const yearsArr = [...Array(lifeExpectancy).keys()];
+	const yearsArr = $derived([...Array(lifeExpectancy).keys()]);
 	const weeksArr = [...Array(52).keys()];
 
-	const weekNum = lifeExpectancy * 52 - parseInt(data['weeks']);
-	const finalWeek = lifeExpectancy * 52;
-	console.log(yearsArr);
+	const weekNum = $derived(lifeExpectancy * 52 - parseInt(data['weeks']));
+	const finalWeek = $derived(lifeExpectancy * 52);
+	
 </script>
 
 <section id="calendar">

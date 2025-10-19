@@ -1,15 +1,89 @@
 <script>
 	import { calculateTimeLeft, getLifePercentageLived } from '../../utils';
+	import Form from '../Form.svelte';
+	import Portal from '../Portal.svelte';
 
 	const { headache } = $props();
 
-	let birthDate = '2000-01-01';
-	let lifeExpectancy = 80;
-	let name = 'John';
+	let showModal = $state(false);
+	function handleToggleModal() {
+		showModal = !showModal;
+	}
 
-	let data = calculateTimeLeft(birthDate, lifeExpectancy);
-	let percentage = getLifePercentageLived(birthDate, lifeExpectancy);
+	let defaultBD = '2000-01-01';
+	let defaultLE = 80;
+	let birthDate = $state(defaultBD);
+	let lifeExpectancy = $state(defaultLE);
+	let name = $state('John');
+	let data = $state(calculateTimeLeft(defaultBD, defaultLE));
+
+	let percentage = $derived(getLifePercentageLived(birthDate, lifeExpectancy));
+
+	function handleUpdateData(n, b, e) {
+		if (!n || !b || !e) {
+			return;
+		}
+
+		// save to local storage
+		localStorage.setItem(
+			'formData',
+			JSON.stringify({
+				name: n,
+				birthDate: b,
+				lifeExpectancy: e,
+			})
+		);
+
+		name = n;
+		birthDate = b;
+		lifeExpectancy = parseInt(e);
+		data = calculateTimeLeft(b, parseInt(e));
+		showModal = false;
+	}
+
+	function resetData() {
+		name = 'John';
+		birthDate = defaultBD;
+		lifeExpectancy = defaultLE;
+		data = calculateTimeLeft(defaultBD, defaultLE);
+		localStorage.clear();
+	}
+
+	$effect(() => {
+		const interval = setInterval(() => {
+			data = calculateTimeLeft(birthDate, lifeExpectancy);
+		}, 1000);
+        return () => clearInterval(interval)
+	});
+
+	$effect(() => {
+		if (!localStorage) {
+			// exits function if no local storage db available
+			return;
+		}
+		// if we get here, we have confirmed we have a database
+		if (localStorage.getItem('formData')) {
+			// that means that we found some data under the key formData
+			const {
+				name: n,
+				birthDate: b,
+				lifeExpectancy: e,
+			} = JSON.parse(localStorage.getItem('formData'));
+			name = n;
+			birthDate = b;
+			lifeExpectancy = parseInt(e);
+			data = calculateTimeLeft(b, parseInt(e));
+		}
+	});
 </script>
+
+{#if showModal}
+	<Portal handleCloseModal={handleToggleModal}>
+		{#snippet form()}
+			<Form {handleUpdateData} />
+		{/snippet}
+	</Portal>
+{/if}
 
 <header>
 	<h1 class="text-medium text-gradient">Death & Taxes</h1>
@@ -17,7 +91,15 @@
 
 <main>
 	<!-- here is where the children will go -->
-	{@render headache({ data, birthDate, name, percentage, lifeExpectancy })}
+	{@render headache({
+		data,
+		birthDate,
+		name,
+		percentage,
+		lifeExpectancy,
+		handleToggleModal,
+		resetData,
+	})}
 </main>
 
 <footer>

@@ -7,8 +7,16 @@
 </script>
 
 <Layout>
-	{#snippet headache({ data, birthDate, name, percentage, lifeExpectancy })}
-		<Hero {name} {percentage} {data} />
+	{#snippet headache({
+		data,
+		birthDate,
+		name,
+		percentage,
+		lifeExpectancy,
+		handleToggleModal,
+		resetData,
+	})}
+		<Hero {resetData} {name} {percentage} {data} {handleToggleModal} />
 		<Clocks {data} />
 		<Calendar {data} {lifeExpectancy} />
 		<Summary {birthDate} {lifeExpectancy} />
